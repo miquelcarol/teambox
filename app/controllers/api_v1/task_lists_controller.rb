@@ -1,9 +1,10 @@
 class ApiV1::TaskListsController < ApiV1::APIController
-  before_filter :load_task_list, :only => [:edit,:update,:show,:destroy,:watch,:unwatch,:archive,:unarchive]
+  before_filter :load_task_list, :only => [:edit,:update,:show,:destroy,:archive,:unarchive]
   before_filter :check_permissions, :only => [:new,:create,:edit,:update,:destroy,:archive,:unarchive]
   
-
   def index
+    @task_lists = @current_project.task_lists
+    
     respond_to do |f|
       f.json  { render :as_json => @task_lists.to_xml(:include => :tasks, :root => 'task-lists') }
     end
@@ -114,25 +115,12 @@ class ApiV1::TaskListsController < ApiV1::APIController
       end
     end
   end
-
-  def watch
-    @task_list.add_watcher(current_user)
-    respond_to do |f|
-      handle_api_success(f, @task_list)
-    end
-  end
-
-  def unwatch
-    @task_list.remove_watcher(current_user)
-    respond_to do |f|
-      handle_api_success(f, @task_list)
-    end
-  end
   
-  private
+  protected
 
     def load_task_list
-      @task_list = @current_project.task_lists.find(params[:id])
+      @task = @current_project.task_lists.find(params[:id])
+      return api_status(:not_found) if @task.nil?
     end
     
     def check_permissions

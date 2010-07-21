@@ -84,6 +84,7 @@ class ApiV1::CommentsController < ApiV1::APIController
 
     def load_comment
       @comment = @current_project.comments.find params[:id]
+      return api_status(:not_found) if @conversation.nil?
     end
 
     def load_target

@@ -76,7 +76,7 @@ class ApiV1::ProjectsController < ApiV1::APIController
 
   protected
   
-  def api_load_project
+  def load_project
     project_id ||= params[:id]
     
     if project_id

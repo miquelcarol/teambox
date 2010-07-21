@@ -36,6 +36,7 @@ class ApiV1::PeopleController < ApiV1::APIController
   
   def load_person
     @person = @current_project.people.find params[:id]
+    return api_status(:not_found) if @person.nil?
   end
   
 end

@@ -112,21 +112,21 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :comments, :only => [ :create ]
   
   map.namespace(:api_v1, :path_prefix => 'api/1') do |api|
-    api.resources :projects do |project|
+    api.resources :projects, :member => [:transfer] do |project|
       project.resources :activities
       project.resources :people
-      project.resources :comments
-      project.resources :conversations
-      project.resources :invitations
-      project.resources :task_lists
-      project.resources :tasks
+      project.resources :comments, :member => [:convert]
+      project.resources :conversations, :member => [:watch, :unwatch]
+      project.resources :invitations, :member => [:resend, :accept]
+      project.resources :task_lists, :member => [:watch, :unwatch, :archive, :unarchive], :collection => [:reorder]
+      project.resources :tasks, :member => [:watch, :unwatch], :collection => [:reorder]
       project.resources :uploads
       project.resources :pages
       project.resources :notes
       project.resources :dividers
     end
     api.resources :activities
-    api.resources :invitations
+    api.resources :invitations, :member => [:accept]
     api.resources :users
   end
   
