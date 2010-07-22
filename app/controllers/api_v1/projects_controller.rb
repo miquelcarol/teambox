@@ -5,7 +5,7 @@ class ApiV1::ProjectsController < ApiV1::APIController
     @projects = current_user.projects
     
     respond_to do |f|
-      f.json  { render :as_json => @projects.to_xml }
+      f.json  { render :as_json => @projects.to_xml(:root => 'projects') }
     end
   end
 

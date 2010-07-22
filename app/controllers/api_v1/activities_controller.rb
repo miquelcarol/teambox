@@ -6,7 +6,7 @@ class ApiV1::ActivitiesController < ApiV1::APIController
     @activities = Project.get_activities_for @target
     
     respond_to do |format|
-      format.json { render :as_json => @activities.to_xml }
+      format.json { render :as_json => @activities.to_xml(:root => 'activities') }
     end
   end
 

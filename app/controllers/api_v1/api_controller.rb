@@ -23,6 +23,12 @@ class ApiV1::APIController < ApplicationController
     end
   end
   
+  def check_permissions
+    unless @current_project.editable?(current_user)
+      api_error("You don't have permission to edit/update/delete within \"#{@current_project.name}\" project", :unauthorized)
+    end
+  end
+  
   def load_task_list
     @task_list = @current_project.task_lists.find(params[:id])
   end

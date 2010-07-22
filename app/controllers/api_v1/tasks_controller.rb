@@ -7,7 +7,7 @@ class ApiV1::TasksController < ApiV1::APIController
     @tasks = (@task_list || @current_project).tasks
     
     respond_to do |f|
-      f.json  { render :as_json => @tasks.to_xml }
+      f.json  { render :as_json => @tasks.to_xml(:root => 'tasks') }
     end
   end
 
@@ -27,7 +27,7 @@ class ApiV1::TasksController < ApiV1::APIController
     
     respond_to do |f|
       if !@task.new_record?
-        handle_api_success(f, @task, true)
+        handle_api_success(f, @task, :is_new => true)
       else
         handle_api_error(f, @task)
       end

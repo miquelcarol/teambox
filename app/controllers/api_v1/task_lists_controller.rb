@@ -21,7 +21,7 @@ class ApiV1::TaskListsController < ApiV1::APIController
     
     respond_to do |f|
       if !@task_list.new_record?
-        handle_api_success(f, @task_list, true)
+        handle_api_success(f, @task_list, :is_new => true)
       else
         handle_api_error(f, @task_list)
       end

@@ -1,12 +1,12 @@
 class ApiV1::ConversationsController < ApiV1::APIController
-  before_filter :load_conversation, :only => [:show,:edit,:update,:destroy,:update_comments,:watch,:unwatch]
-  before_filter :check_permissions, :only => [:show,:edit,:create,:update,:destroy,:watch,:unwatch]
+  before_filter :load_conversation, :only => [:show,:update,:destroy,:watch,:unwatch]
+  before_filter :check_permissions, :only => [:create,:update,:destroy,:watch,:unwatch]
   
   def index
     @conversations = @current_project.conversations
     
     respond_to do |f|
-      f.json  { render :as_json => @conversations.to_xml }
+      f.json  { render :as_json => @conversations.to_xml(:root => 'conversations') }
     end
   end
 
@@ -32,7 +32,7 @@ class ApiV1::ConversationsController < ApiV1::APIController
     
     respond_to do |f|
       if @saved
-        handle_api_success(f, @conversation, true)
+        handle_api_success(f, @conversation, :is_new => true)
       else
         handle_api_error(f, @conversation)
       end

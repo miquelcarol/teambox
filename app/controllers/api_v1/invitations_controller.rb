@@ -8,7 +8,7 @@ class ApiV1::InvitationsController < ApiV1::APIController
     @invitations = @target.invitations
     
     respond_to do |f|
-      f.json  { render :as_json => @invitations.to_xml }
+      f.json  { render :as_json => @invitations.to_xml(:root => 'invitations') }
     end
   end
 

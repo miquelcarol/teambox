@@ -8,7 +8,7 @@ class ApiV1::CommentsController < ApiV1::APIController
     @comments = @target.comments
     
     respond_to do |f|
-      f.json  { render :as_json => @comments.to_xml }
+      f.json  { render :as_json => @comments.to_xml(:root => 'comments') }
     end
   end
 
