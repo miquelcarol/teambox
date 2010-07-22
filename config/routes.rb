@@ -121,7 +121,7 @@ ActionController::Routing::Routes.draw do |map|
       project.resources :task_lists, :member => [:watch, :unwatch, :archive, :unarchive], :collection => [:reorder]
       project.resources :tasks, :member => [:watch, :unwatch], :collection => [:reorder]
       project.resources :uploads
-      project.resources :pages
+      project.resources :pages, :member => [:reorder]
       project.resources :notes
       project.resources :dividers
     end
