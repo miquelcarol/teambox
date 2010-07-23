@@ -15,7 +15,7 @@ describe ApiV1::PeopleController do
     it "shows people in the project" do
       login_as @user2
       
-      get :index, :project_id => @project.permalink, :id => @project.people.first.id
+      get :index, :project_id => @project.permalink
       response.should be_success
       
       JSON.parse(response.body)['people'].length.should == 3
@@ -28,6 +28,8 @@ describe ApiV1::PeopleController do
       
       get :show, :project_id => @project.permalink, :id => @project.people.first.id
       response.should be_success
+      
+      JSON.parse(response.body)['person']['id'].should == @project.people.first.id.to_s
     end
   end
   

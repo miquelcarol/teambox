@@ -68,7 +68,7 @@ describe ApiV1::ProjectsController do
       
       get :show, :id => @project.permalink
       response.should be_success
-      JSON.parse(response.body).has_key?('project').should == true
+      JSON.parse(response.body)['project']['id'].should == @project.id.to_s
     end
     
     it "should not show a project the user doesn't belong to" do

@@ -40,7 +40,7 @@ class ApiV1::ConversationsController < ApiV1::APIController
   end
   
   def update
-    @saved = @conversation.update_attributes(params[:task_list])
+    @saved = @conversation.update_attributes(params[:conversation])
     
     respond_to do |f|
       if @saved
@@ -83,6 +83,15 @@ class ApiV1::ConversationsController < ApiV1::APIController
     unless (@conversation || @current_project).editable?(current_user)
       api_error(t('common.not_allowed'), :unauthorized)
       return false
+    end
+  end
+  
+  def add_watchers(hash)
+    (hash || []).each do |user_id, should_notify|
+      if should_notify == "1" and Person.exists? :project_id => @conversation.project_id, :user_id => user_id
+        user = User.find user_id
+        @conversation.add_watcher user# if user
+      end
     end
   end
   

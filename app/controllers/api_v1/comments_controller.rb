@@ -26,7 +26,7 @@ class ApiV1::CommentsController < ApiV1::APIController
     if @comment.target.is_a?(Project)
       @conversation = @current_project.new_conversation(current_user, :simple => true )
       @conversation.body = @comment.body
-      if conversation.save
+      if @conversation.save
         comment = @conversation.comments.last
         comment.uploads = @comment.uploads
         @saved = comment.save
@@ -84,7 +84,7 @@ class ApiV1::CommentsController < ApiV1::APIController
 
     def load_comment
       @comment = @current_project.comments.find params[:id]
-      return api_status(:not_found) if @conversation.nil?
+      return api_status(:not_found) if @comment.nil?
     end
 
     def load_target
