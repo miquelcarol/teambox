@@ -32,6 +32,11 @@ class ApiV1::APIController < ApplicationController
   def load_task_list
     @task_list = (@current_project && params[:task_list_id]) ? @current_project.task_lists.find(params[:task_list_id]) : nil
   end
+  
+  def load_page
+    @page = @current_project.pages.find params[:page_id]
+    return api_status(:not_found) if @page.nil?
+  end
 
   # Common api helpers
   
