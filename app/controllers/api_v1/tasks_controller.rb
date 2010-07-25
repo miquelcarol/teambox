@@ -4,7 +4,11 @@ class ApiV1::TasksController < ApiV1::APIController
   before_filter :check_permissions, :except => [:index, :show]
   
   def index
-    @tasks = (@task_list || @current_project).tasks
+    if @current_project
+      @tasks = (@task_list || @current_project).tasks
+    else
+      @tasks = Task.find(:all, :conditions => {:project_id => current_user.project_ids})
+    end
     
     respond_to do |f|
       f.json  { render :as_json => @tasks.to_xml(:root => 'tasks') }
@@ -18,7 +22,7 @@ class ApiV1::TasksController < ApiV1::APIController
   end
   
   def create
-    if @task = @current_project.create_task(current_user,@task_list,task_params)
+    if @task = @current_project.create_task(current_user,@task_list,params[:task])
       unless @task.new_record?
         @comment = @current_project.new_task_comment(@task)
         @task.reload
@@ -35,7 +39,7 @@ class ApiV1::TasksController < ApiV1::APIController
   end
   
   def update
-    @saved = @task.update_attributes(params[:task_list])
+    @saved = @task.update_attributes(params[:task])
     
     respond_to do |f|
       if @saved
@@ -83,7 +87,11 @@ class ApiV1::TasksController < ApiV1::APIController
   protected
   
   def load_task
-    @task = (@task_list || @current_project).tasks.find(params[:id])
+    if @current_project
+      @task = (@task_list || @current_project).tasks.find(params[:id]) rescue nil
+    else
+      @task = Task.find(params[:id], :conditions => {:project_id => current_user.project_ids})
+    end
     return api_status(:not_found) if @task.nil?
   end
   

@@ -30,7 +30,7 @@ class ApiV1::APIController < ApplicationController
   end
   
   def load_task_list
-    @task_list = @current_project.task_lists.find(params[:id])
+    @task_list = (@current_project && params[:task_list_id]) ? @current_project.task_lists.find(params[:task_list_id]) : nil
   end
 
   # Common api helpers
