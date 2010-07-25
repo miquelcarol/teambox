@@ -2,13 +2,7 @@ require 'spec_helper'
 
 describe ApiV1::ConversationsController do
   before do
-    @user = Factory.create(:confirmed_user)
-    @project = Factory.create(:project)
-    @owner = @project.user
-    @project.add_user(@user)
-    @observer = Factory.create(:confirmed_user)
-    @project.add_user(@observer)
-    @project.people(true).last.update_attribute(:role, Person::ROLES[:observer])
+    make_a_typical_project
     
     @conversation = @project.new_conversation(@user, {:name => 'Something needs to be done'})
     @conversation.body = 'Hell yes!'

@@ -169,6 +169,10 @@ class User < ActiveRecord::Base
       update_attribute(:visited_at, Time.now)
     end
   end
+  
+  def person_for(project)
+    self.people.find_by_project_id(project.id)
+  end
 
   def contacts_not_in_project(project)
     conditions = ["project_id IN (?)", Array(self.projects).collect{ |p| p.id } ]

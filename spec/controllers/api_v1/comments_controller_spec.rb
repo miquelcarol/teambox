@@ -2,15 +2,7 @@ require 'spec_helper'
 
 describe ApiV1::CommentsController do
   before do
-    @user = Factory.create(:confirmed_user)
-    @project = Factory.create(:project)
-    @owner = @project.user
-    @project.add_user(@user)
-    @user2 = Factory.create(:confirmed_user)
-    @project.add_user(@user2)
-    @observer = Factory.create(:confirmed_user)
-    @project.add_user(@observer)
-    @project.people.last.update_attribute(:role, Person::ROLES[:observer])
+    make_a_typical_project
     
     @comment = @project.new_comment(@user, @project, {:body => 'Something happened!'})
     @comment.save!
@@ -18,7 +10,7 @@ describe ApiV1::CommentsController do
   
   describe "#index" do
     it "shows comments in the project" do
-      login_as @user2
+      login_as @user
       
       get :index, :project_id => @project.permalink
       response.should be_success
@@ -99,7 +91,7 @@ describe ApiV1::CommentsController do
     end
     
     it "should not allow a non-admin to destroy another comment" do
-      login_as @user2
+      login_as @observer
       
       put :destroy, :project_id => @project.permalink, :id => @comment.id
       response.status.should == '422 Unprocessable Entity'

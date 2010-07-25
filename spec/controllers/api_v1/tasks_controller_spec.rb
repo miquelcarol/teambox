@@ -2,13 +2,7 @@ require 'spec_helper'
 
 describe ApiV1::TasksController do
   before do
-    @user = Factory.create(:confirmed_user)
-    @project = Factory.create(:project)
-    @owner = @project.user
-    @project.add_user(@user)
-    @observer = Factory.create(:confirmed_user)
-    @project.add_user(@observer)
-    @project.people(true).last.update_attribute(:role, Person::ROLES[:observer])
+    make_a_typical_project
     
     @task_list = @project.create_task_list(@owner, {:name => 'A TODO list'})
     @task_list.save!

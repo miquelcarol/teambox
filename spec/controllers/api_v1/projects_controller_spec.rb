@@ -2,13 +2,7 @@ require 'spec_helper'
 
 describe ApiV1::ProjectsController do
   before do
-    @user = Factory.create(:confirmed_user)
-    @admin = Factory.create(:confirmed_user)
-    @project = Factory.create(:project)
-    @owner = @project.user
-    @project.add_user(@user)
-    @project.add_user(@admin)
-    @project.people.last.update_attribute(:role, Person::ROLES[:admin])
+    make_a_typical_project
   end
   
   describe "#index" do

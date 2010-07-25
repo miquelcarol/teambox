@@ -76,4 +76,7 @@ def make_a_typical_project
     @observer = Factory.create(:confirmed_user)
     @project.add_user(@observer)
     @project.people(true).last.update_attribute(:role, Person::ROLES[:observer])
+    @admin = Factory.create(:confirmed_user)
+    @project.add_user(@admin)
+    @project.people(true).last.update_attribute(:role, Person::ROLES[:admin])
 end

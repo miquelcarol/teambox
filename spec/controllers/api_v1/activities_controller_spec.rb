@@ -2,10 +2,8 @@ require 'spec_helper'
 
 describe ApiV1::ActivitiesController do
   before do
-    @user = Factory.create(:confirmed_user)
-    @project = Factory.create(:project)
-    @owner = @project.user
-    @project.add_user(@user)
+    make_a_typical_project
+    
     @other_project = Factory.create(:project)
     @other_project.add_user(@user)
   end
