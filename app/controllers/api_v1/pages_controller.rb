@@ -1,4 +1,4 @@
-class ApiV1::PagesController < ApplicationController
+class ApiV1::PagesController < ApiV1::APIController
   before_filter :load_page, :only => [:show, :update, :reorder, :destroy]
   before_filter :check_permissions, :only => [:create,:update,:reorder,:destroy]
   

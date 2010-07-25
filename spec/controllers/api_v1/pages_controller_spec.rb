@@ -38,17 +38,41 @@ describe ApiV1::PagesController do
   
   describe "#update" do
     it "should allow participants to modify the page" do
+      login_as @user
+      
+      post :update, :project_id => @project.permalink, :id => @page.id, :page => {:name => 'Unimportant Plans'}
+      response.should be_success
+      
+      @page.reload.name.should == 'Unimportant Plans'
     end
     
     it "should not allow non-participants to modify the page" do
+      login_as @observer
+      
+      post :update, :project_id => @project.permalink, :id => @page.id, :page => {:name => 'Unimportant Plans'}
+      response.status.should == '401 Unauthorized'
+      
+      @page.reload.name.should == 'Important plans!'
     end
   end
   
   describe "#destroy" do
     it "should allow participants to destroy the page" do
+      login_as @user
+      
+      post :destroy, :project_id => @project.permalink, :id => @page.id
+      response.should be_success
+      
+      @project.pages.length.should == 0
     end
     
     it "should not allow non-participants to destroy the page" do
+      login_as @observer
+      
+      post :destroy, :project_id => @project.permalink, :id => @page.id
+      response.status.should == '401 Unauthorized'
+      
+      @project.pages.length.should == 1
     end
   end
 end
