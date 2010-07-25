@@ -1,6 +1,6 @@
 class ApiV1::TaskListsController < ApiV1::APIController
-  before_filter :load_task_list, :only => [:edit,:update,:show,:destroy,:archive,:unarchive]
-  before_filter :check_permissions, :only => [:new,:create,:edit,:update,:destroy,:archive,:unarchive]
+  before_filter :load_task_list, :only => [:update,:show,:destroy,:archive,:unarchive]
+  before_filter :check_permissions, :only => [:create,:update,:destroy,:archive,:unarchive]
   
   def index
     @task_lists = @current_project.task_lists
@@ -100,27 +100,18 @@ class ApiV1::TaskListsController < ApiV1::APIController
   end
 
   def destroy
-    @has_permission = if @task_list.editable?(current_user)
-      @task_list.try(:destroy)
-      true
-    else
-      false
-    end
+    @task_list.destroy
     
     respond_to do |f|
-      if @has_permission
-        handle_api_success(f, @task_list)
-      else
-        handle_api_error(f, @task_list)
-      end
+      handle_api_success(f, @task_list)
     end
   end
   
   protected
 
     def load_task_list
-      @task = @current_project.task_lists.find(params[:id])
-      return api_status(:not_found) if @task.nil?
+      @task_list = @current_project.task_lists.find(params[:id])
+      return api_status(:not_found) if @task_list.nil?
     end
     
     def check_permissions
