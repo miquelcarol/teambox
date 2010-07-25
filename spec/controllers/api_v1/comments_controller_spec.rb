@@ -62,19 +62,19 @@ describe ApiV1::CommentsController do
     it "should allow the owner to modify a comment within 15 minutes" do
       login_as @user
       
-      post :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated!'}
+      put :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated!'}
       response.should be_success
       
       @comment.update_attribute(:created_at, Time.now - 16.minutes)
       
-      post :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated!'}
+      put :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated!'}
       response.status.should == '401 Unauthorized'
     end
     
     it "should not allow anyone else to modify another comment" do
       login_as @project.user
       
-      post :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated!'}
+      put :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated!'}
       response.status.should == '401 Unauthorized'
     end
   end
@@ -83,7 +83,7 @@ describe ApiV1::CommentsController do
     it "should allow an admin to destroy a comment" do
       login_as @project.user
       
-      post :destroy, :project_id => @project.permalink, :id => @comment.id
+      put :destroy, :project_id => @project.permalink, :id => @comment.id
       response.should be_success
       
       @project.comments(true).length.should == 0
@@ -92,7 +92,7 @@ describe ApiV1::CommentsController do
     it "should allow the owner to destroy a comment" do
       login_as @user
       
-      post :destroy, :project_id => @project.permalink, :id => @comment.id
+      put :destroy, :project_id => @project.permalink, :id => @comment.id
       response.should be_success
       
       @project.comments(true).length.should == 0
@@ -101,7 +101,7 @@ describe ApiV1::CommentsController do
     it "should not allow a non-admin to destroy another comment" do
       login_as @user2
       
-      post :destroy, :project_id => @project.permalink, :id => @comment.id
+      put :destroy, :project_id => @project.permalink, :id => @comment.id
       response.status.should == '422 Unprocessable Entity'
       
       @project.comments(true).length.should == 1

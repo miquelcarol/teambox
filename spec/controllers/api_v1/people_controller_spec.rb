@@ -37,7 +37,7 @@ describe ApiV1::PeopleController do
     it "should allow an admin to modify a person" do
       login_as @user
       
-      post :update, :project_id => @project.permalink, :id => @project.people.last.id, :person => {:role => Person::ROLES[:admin]}
+      put :update, :project_id => @project.permalink, :id => @project.people.last.id, :person => {:role => Person::ROLES[:admin]}
       response.should be_success
       
       @project.reload.admin?(@user2).should == true
@@ -46,7 +46,7 @@ describe ApiV1::PeopleController do
     it "should not allow the owner to be modified" do
       login_as @user
       
-      post :update, :project_id => @project.permalink, :id => @project.people.first.id, :person => {:role => Person::ROLES[:participant]}
+      put :update, :project_id => @project.permalink, :id => @project.people.first.id, :person => {:role => Person::ROLES[:participant]}
       response.status.should == '422 Unprocessable Entity'
       
       @project.reload.admin?(@owner).should == true
@@ -55,7 +55,7 @@ describe ApiV1::PeopleController do
     it "should not allow a non-admin to modify a person" do
       login_as @user2
       
-      post :update, :project_id => @project.permalink, :id => @project.people.last.id, :person => {:role => Person::ROLES[:admin]}
+      put :update, :project_id => @project.permalink, :id => @project.people.last.id, :person => {:role => Person::ROLES[:admin]}
       response.status.should == '401 Unauthorized'
       
       @project.reload.admin?(@user2).should == false
@@ -66,7 +66,7 @@ describe ApiV1::PeopleController do
     it "should allow an admin to destroy a person" do
       login_as @user2
       
-      post :destroy, :project_id => @project.permalink, :id => @project.people.last.id
+      put :destroy, :project_id => @project.permalink, :id => @project.people.last.id
       response.should be_success
       
       @project.people(true).length.should == 2
@@ -75,7 +75,7 @@ describe ApiV1::PeopleController do
     it "should not allow an owner to remove themselves from the project" do
       login_as @owner
       
-      post :destroy, :project_id => @project.permalink, :id => @project.people.first.id
+      put :destroy, :project_id => @project.permalink, :id => @project.people.first.id
       response.status.should == '401 Unauthorized'
       
       @project.people(true).length.should == 3
@@ -84,7 +84,7 @@ describe ApiV1::PeopleController do
     it "should allow a user to remove themselves from the project" do
       login_as @user2
       
-      post :destroy, :project_id => @project.permalink, :id => @project.people[2].id
+      put :destroy, :project_id => @project.permalink, :id => @project.people[2].id
       response.should be_success
       
       @project.people(true).length.should == 2
@@ -93,7 +93,7 @@ describe ApiV1::PeopleController do
     it "should not allow a non-admin to destroy another person" do
       login_as @user2
       
-      post :destroy, :project_id => @project.permalink, :id => @project.people[1].id
+      put :destroy, :project_id => @project.permalink, :id => @project.people[1].id
       response.status.should == '401 Unauthorized'
       
       @project.people(true).length.should == 3

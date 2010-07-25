@@ -62,7 +62,7 @@ describe ApiV1::ConversationsController do
     it "should allow participants to modify a conversation" do
       login_as @user
       
-      post :update, :project_id => @project.permalink, :id => @conversation.id, :conversation => {:name => 'Modified'}
+      put :update, :project_id => @project.permalink, :id => @conversation.id, :conversation => {:name => 'Modified'}
       response.should be_success
       
       @conversation.reload.name.should == 'Modified'
@@ -71,7 +71,7 @@ describe ApiV1::ConversationsController do
     it "should not allow observers to modify a conversation" do
       login_as @observer
       
-      post :update, :project_id => @project.permalink, :id => @conversation.id, :conversation => {:name => 'Modified'}
+      put :update, :project_id => @project.permalink, :id => @conversation.id, :conversation => {:name => 'Modified'}
       response.status.should == '401 Unauthorized'
       
       @conversation.reload.name.should_not == 'Modified'
@@ -82,7 +82,7 @@ describe ApiV1::ConversationsController do
     it "should allow participants to destroy a conversation" do
       login_as @user
       
-      post :destroy, :project_id => @project.permalink, :id => @conversation.id
+      put :destroy, :project_id => @project.permalink, :id => @conversation.id
       response.should be_success
       
       @project.conversations(true).length.should == 0
@@ -91,7 +91,7 @@ describe ApiV1::ConversationsController do
     it "should not allow observers to destroy a conversation" do
       login_as @observer
       
-      post :destroy, :project_id => @project.permalink, :id => @conversation.id
+      put :destroy, :project_id => @project.permalink, :id => @conversation.id
       response.status.should == '401 Unauthorized'
       
       @project.conversations(true).length.should == 1

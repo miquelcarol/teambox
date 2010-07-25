@@ -54,7 +54,7 @@ describe ApiV1::ProjectsController do
     it "should allow an admin to update the project" do
       login_as @admin
       
-      post :update, :id => @project.permalink, :project => {:permalink => 'ffffuuuuuu'}
+      put :update, :id => @project.permalink, :project => {:permalink => 'ffffuuuuuu'}
       response.should be_success
       
       @project.reload.permalink.should == 'ffffuuuuuu'
@@ -63,7 +63,7 @@ describe ApiV1::ProjectsController do
     it "should not allow a non-admin to update the project" do
       login_as @user
       
-      post :update, :id => @project.permalink, :project => {:permalink => 'ffffuuuuuu'}
+      put :update, :id => @project.permalink, :project => {:permalink => 'ffffuuuuuu'}
       response.status.should == '401 Unauthorized'
       
       @project.reload.permalink.should_not == 'ffffuuuuuu'
@@ -74,7 +74,7 @@ describe ApiV1::ProjectsController do
     it "should allow the owner to transfer the project" do
       login_as @owner
       
-      post :transfer, :id => @project.permalink, :project => {:user_id => @user.id}
+      put :transfer, :id => @project.permalink, :project => {:user_id => @user.id}
       response.should be_success
       
       @project.reload.user.should == @user
@@ -83,7 +83,7 @@ describe ApiV1::ProjectsController do
     it "should not allow non-owners to transfer the project" do
       login_as @user
       
-      post :transfer, :id => @project.permalink, :project => {:user_id => @user.id}
+      put :transfer, :id => @project.permalink, :project => {:user_id => @user.id}
       response.status.should == '401 Unauthorized'
       
       @project.reload.user.should == @owner
@@ -113,7 +113,7 @@ describe ApiV1::ProjectsController do
       login_as @owner
       
       Project.count.should == 1
-      post :destroy, :id => @project.permalink
+      put :destroy, :id => @project.permalink
       response.should be_success
       Project.count.should == 0
     end
@@ -122,7 +122,7 @@ describe ApiV1::ProjectsController do
       login_as @user
       
       Project.count.should == 1
-      post :destroy, :id => @project.permalink
+      put :destroy, :id => @project.permalink
       response.status.should == '401 Unauthorized'
       Project.count.should == 1
     end
