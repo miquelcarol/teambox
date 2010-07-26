@@ -7,15 +7,11 @@ class ApiV1::CommentsController < ApiV1::APIController
   def index
     @comments = @target.comments.all(:conditions => api_range, :limit => api_limit)
     
-    respond_to do |f|
-      f.json  { render :as_json => @comments.to_xml(:root => 'comments') }
-    end
+    api_respond @comments.to_xml(:root => 'comments')
   end
 
   def show
-    respond_to do |f|
-      f.json  { render :as_json => @comment.to_xml }
-    end
+    api_respond @comment.to_xml
   end
   
   def create
@@ -38,24 +34,20 @@ class ApiV1::CommentsController < ApiV1::APIController
       @saved = @comment.save
     end
 
-    respond_to do |f|
-      if @saved
-        handle_api_success(f, @conversation || @comment, :is_new => true)
-      else
-        handle_api_error(f, @conversation || @comment)
-      end
+    if @saved
+      handle_api_success(@conversation || @comment, :is_new => true)
+    else
+      handle_api_error(@conversation || @comment)
     end
   end
   
   def update
     @has_permission and @saved = @comment.update_attributes(params[:comment])
     
-    respond_to do |f|
-      if @saved
-        handle_api_success(f, @comment)
-      else
-        handle_api_error(f, @comment)
-      end
+    if @saved
+      handle_api_success(@comment)
+    else
+      handle_api_error(@comment)
     end
   end
 
@@ -67,12 +59,10 @@ class ApiV1::CommentsController < ApiV1::APIController
       false
     end
     
-    respond_to do |f|
-      if @has_permission
-        handle_api_success(f, @comment)
-      else
-        handle_api_error(f, @comment)
-      end
+    if @has_permission
+      handle_api_success(@comment)
+    else
+      handle_api_error(@comment)
     end
   end
   
@@ -84,7 +74,7 @@ class ApiV1::CommentsController < ApiV1::APIController
 
     def load_comment
       @comment = @current_project.comments.find params[:id]
-      return api_status(:not_found) if @comment.nil?
+      api_status(:not_found) unless @comment
     end
 
     def load_target
@@ -103,16 +93,9 @@ class ApiV1::CommentsController < ApiV1::APIController
     
     def check_permissions
       # Can they even create comments?
-      if @comment.nil?
-        unless @current_project.commentable?(current_user)
-          api_error(t('common.not_allowed'), :unauthorized)
-          return false
-        end
-      end
-      
       if @comment
         @has_permission = true
-        @checks_time = true if @checks_time.nil?
+        @checks_time = @checks_time.nil?
         
         if action_name == 'destroy'
           return if @comment.can_destroy?(current_user, @checks_time)
@@ -128,7 +111,10 @@ class ApiV1::CommentsController < ApiV1::APIController
         
         # Process of elimination: don't allow this!
         api_error(t('comments.errors.cannot_update'), :unauthorized)
-        return false
+      else
+        unless @current_project.commentable?(current_user)
+          api_error(t('common.not_allowed'), :unauthorized)
+        end
       end
     end
 

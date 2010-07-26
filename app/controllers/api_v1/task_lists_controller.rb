@@ -4,39 +4,30 @@ class ApiV1::TaskListsController < ApiV1::APIController
   
   def index
     @task_lists = @current_project.task_lists.all(:conditions => api_range, :limit => api_limit)
-    
-    respond_to do |f|
-      f.json  { render :as_json => @task_lists.to_xml(:include => :tasks, :root => 'task-lists') }
-    end
+    api_respond @task_lists.to_xml(:include => :tasks, :root => 'task-lists')
   end
 
   def show
-    respond_to do |f|
-      f.json  { render :as_json => @task_list.to_xml(:include => [:tasks, :comments]) }
-    end
+    api_respond @task_list.to_xml(:include => [:tasks, :comments])
   end
 
   def create
     @task_list = @current_project.create_task_list(current_user,params[:task_list])
     
-    respond_to do |f|
-      if !@task_list.new_record?
-        handle_api_success(f, @task_list, :is_new => true)
-      else
-        handle_api_error(f, @task_list)
-      end
+    if @task_list.new_record?
+      handle_api_error(@task_list)
+    else
+      handle_api_success(@task_list, :is_new => true)
     end
   end
 
   def update
     @saved = @task_list.update_attributes(params[:task_list])
     
-    respond_to do |f|
-      if @saved
-        handle_api_success(f, @task_list)
-      else
-        handle_api_error(f, @task_list)
-      end
+    if @saved
+      handle_api_success(@task_list)
+    else
+      handle_api_error(@task_list)
     end
   end
 
@@ -46,9 +37,7 @@ class ApiV1::TaskListsController < ApiV1::APIController
       @task_list.update_attribute(:position,idx.to_i)
     end
     
-    respond_to do |f|
-      handle_api_success(f, @task_list)
-    end
+    handle_api_success(@task_list)
   end
   
   def archive
@@ -74,13 +63,9 @@ class ApiV1::TaskListsController < ApiV1::APIController
       @task_list.archived = true
       @task_list.save!
       
-      respond_to do |f|
-        handle_api_success(f, @task_list)
-      end
+      handle_api_success(@task_list)
     else
-      respond_to do |f|
-        handle_api_error(f, @task_list)
-      end
+      handle_api_error(@task_list)
     end
   end
   
@@ -90,35 +75,29 @@ class ApiV1::TaskListsController < ApiV1::APIController
       @saved = @task_list.save
     end
     
-    respond_to do |f|
-      if @saved
-        handle_api_success(f, @task_list)
-      else
-        handle_api_error(f, @task_list)
-      end
+    if @saved
+      handle_api_success(@task_list)
+    else
+      handle_api_error(@task_list)
     end
   end
 
   def destroy
     @task_list.destroy
-    
-    respond_to do |f|
-      handle_api_success(f, @task_list)
-    end
+    handle_api_success(@task_list)
   end
   
   protected
 
     def load_task_list
       @task_list = @current_project.task_lists.find(params[:id])
-      return api_status(:not_found) if @task_list.nil?
+      api_status(:not_found) unless @task_list
     end
     
     def check_permissions
       # Can they even edit the project?
       unless @current_project.editable?(current_user)
         api_error(t('common.not_allowed'), :unauthorized)
-        return false
       end
     end
   

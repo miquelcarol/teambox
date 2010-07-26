@@ -6,15 +6,11 @@ class ApiV1::NotesController < ApiV1::APIController
   def index
     @notes = @page.notes
     
-    respond_to do |f|
-      f.json{ render :as_json => @notes.to_xml(:root => 'notes') }
-    end
+    api_respond @notes.to_xml(:root => 'notes')
   end
 
   def show
-    respond_to do |f|
-      f.json{ render :as_json => @note.to_xml }
-    end
+    api_respond @note.to_xml
   end
   
   def create
@@ -24,38 +20,32 @@ class ApiV1::NotesController < ApiV1::APIController
     @note.updated_by = current_user
     save_slot(@note) if @note.save
     
-    respond_to do |f|
-      if !@note.new_record?
-        handle_api_success(f, @note, :is_new => true)
-      else
-        handle_api_error(f, @note)
-      end
+    if @note.new_record?
+      handle_api_error(@note)
+    else
+      handle_api_success(@note, :is_new => true)
     end
   end
   
   def update
     @note.updated_by = current_user
-    respond_to do |f|
-      if @note.update_attributes(params[:note])
-        handle_api_success(f, @note)
-      else
-        handle_api_error(f, @note)
-      end
+    if @note.update_attributes(params[:note])
+      handle_api_success(@note)
+    else
+      handle_api_error(@note)
     end
   end
 
   def destroy
     @note.destroy
-    respond_to do |f|
-      handle_api_success(f,@note)
-    end
+    handle_api_success(@note)
   end
 
   protected
   
   def load_note
     @note = @page.notes.find params[:id]
-    return api_status(:not_found) if @note.nil?
+    api_status(:not_found) unless @note
   end
   
 end

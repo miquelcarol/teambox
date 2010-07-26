@@ -1,6 +1,8 @@
 class ApiV1::APIController < ApplicationController
   skip_before_filter :rss_token, :recent_projects, :touch_user
 
+  API_LIMIT = 25
+
   protected
   
   def load_project
@@ -8,10 +10,7 @@ class ApiV1::APIController < ApplicationController
     
     if project_id
       @current_project = Project.find_by_permalink(project_id)
-      
-      unless @current_project
-        api_status(:not_found)
-      end
+      api_status(:not_found) unless @current_project
     end
   end
   
@@ -25,20 +24,28 @@ class ApiV1::APIController < ApplicationController
   
   def check_permissions
     unless @current_project.editable?(current_user)
-      api_error("You don't have permission to edit/update/delete within \"#{@current_project.name}\" project", :unauthorized)
+      api_error("You don't have permission to edit/update/delete within \"#{@current_project}\" project", :unauthorized)
     end
   end
   
   def load_task_list
-    @task_list = (@current_project && params[:task_list_id]) ? @current_project.task_lists.find(params[:task_list_id]) : nil
+    if @current_project && params[:task_list_id]
+      @task_list = @current_project.task_lists.find(params[:task_list_id])
+    end
   end
   
   def load_page
     @page = @current_project.pages.find params[:page_id]
-    return api_status(:not_found) if @page.nil?
+    api_status(:not_found) unless @page
   end
 
   # Common api helpers
+  
+  def api_respond(json)
+    respond_to do |f|
+      f.json { render :as_json => json }
+    end
+  end
   
   def api_status(status)
     respond_to do |f|
@@ -53,21 +60,25 @@ class ApiV1::APIController < ApplicationController
     end
   end
   
-  def handle_api_error(f,object,options={})
+  def handle_api_error(object,options={})
     error_list = object.nil? ? [] : object.errors
-    f.json { render :as_json => error_list.to_xml, :status => options.delete(:status) || :unprocessable_entity }
+    respond_to do |f|
+      f.json { render :as_json => error_list.to_xml, :status => options.delete(:status) || :unprocessable_entity }
+    end
   end
   
-  def handle_api_success(f,object,options={})
-    if options.delete(:is_new) || false
-      f.json { render :as_json => object.to_xml, :status => options.delete(:status) || :created }
-    else
-      f.json { head(options.delete(:status) || :ok) }
+  def handle_api_success(object,options={})
+    respond_to do |f|
+      if options.delete(:is_new) || false
+        f.json { render :as_json => object.to_xml, :status => options.delete(:status) || :created }
+      else
+        f.json { head(options.delete(:status) || :ok) }
+      end
     end
   end
   
   def api_limit
-    params[:count] || 25
+    [params[:count].to_i, API_LIMIT].max
   end
   
   def api_range
@@ -86,7 +97,7 @@ class ApiV1::APIController < ApplicationController
   end
   
   def set_client
-    request.format = 'json'
+    request.format = :json
   end
   
 end

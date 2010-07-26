@@ -5,15 +5,11 @@ class ApiV1::UploadsController < ApiV1::APIController
   def index
     @uploads = @current_project.uploads.all(:conditions => api_range, :limit => api_limit)
     
-    respond_to do |f|
-      f.json { render :as_json => @uploads.to_xml(:root => 'uploads') }
-    end
+    api_respond @uploads.to_xml(:root => 'uploads')
   end
 
   def show
-    respond_to do |f|
-      f.json  { render :as_json => @upload.to_xml }
-    end
+    api_respond @upload.to_xml
   end
   
   def create
@@ -27,28 +23,23 @@ class ApiV1::UploadsController < ApiV1::APIController
       save_slot(@upload) if @upload.page
     end
 
-    respond_to do |f|
-      if !@upload.new_record?
-        handle_api_success(f, @upload, :is_new => true)
-      else
-        handle_api_error(f, @upload)
-      end
+    if @upload.new_record?
+      handle_api_error(@upload)
+    else
+      handle_api_success(@upload, :is_new => true)
     end
   end
 
   def destroy
     @upload.destroy
-    
-    respond_to do |f|
-      handle_api_success(f, @upload)
-    end
+    handle_api_success(@upload)
   end
 
   protected
   
   def load_upload
     @upload = @current_project.uploads.find(params[:id])
-    return api_status(:not_found) if @upload.nil?
+    api_status(:not_found) unless @upload
   end
   
 end

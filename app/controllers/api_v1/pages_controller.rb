@@ -3,41 +3,33 @@ class ApiV1::PagesController < ApiV1::APIController
   before_filter :check_permissions, :only => [:create,:update,:reorder,:destroy]
   
   def index
-    if @current_project
-      @pages = @current_project.pages.all(:conditions => api_range, :limit => api_limit)
+    @pages = if @current_project
+      @current_project.pages.all(:conditions => api_range, :limit => api_limit)
     else
-      @pages = Page.find_all_by_project_id(current_user.project_ids, :conditions => api_range, :limit => api_limit)
+      Page.find_all_by_project_id(current_user.project_ids, :conditions => api_range, :limit => api_limit)
     end
     
-    respond_to do |f|
-      f.json{ render :as_json => @pages.to_xml(:include => :slots, :root => 'pages') }
-    end
+    api_respond @pages.to_xml(:include => :slots, :root => 'pages')
   end
   
   def create
-    @page = @current_project.new_page(current_user,params[:page])    
-    respond_to do |f|
-      if @page.save
-        handle_api_success(f, @page, true)
-      else
-        handle_api_error(f, @page)
-      end
+    @page = @current_project.new_page(current_user,params[:page])
+    if @page.save
+      handle_api_success(@page, true)
+    else
+      handle_api_error(@page)
     end
   end
     
   def show
-    respond_to do |f|
-      f.json{ render :as_json => @page.to_xml(:include => [:slots, :objects]) }
-    end
+    api_respond @page.to_xml(:include => [:slots, :objects])
   end
   
   def update
-    respond_to do |f|
-      if @page.update_attributes(params[:page])
-        handle_api_success(f, @page)
-      else
-        handle_api_error(f, @page)
-      end
+    if @page.update_attributes(params[:page])
+      handle_api_success(@page)
+    else
+      handle_api_error(@page)
     end
   end
   
@@ -60,23 +52,19 @@ class ApiV1::PagesController < ApiV1::APIController
       slot.save!
     end
     
-    respond_to do |f|
-      handle_api_success(f, @page)
-    end
+    handle_api_success(@page)
   end
 
   def destroy
     @page.destroy
 
-    respond_to do |f|
-      handle_api_success(f, @page)
-    end
+    handle_api_success(@page)
   end
 
   protected
     def load_page
       @page = @current_project.pages.find params[:id]
-      return api_status(:not_found) if @page.nil?
+      api_status(:not_found) unless @page
     end
     
 end

@@ -5,38 +5,29 @@ class ApiV1::PeopleController < ApiV1::APIController
   def index
     @people = @current_project.people
     
-    respond_to do |f|
-      f.json  { render :as_json => @people.to_xml(:root => 'people') }
-    end
+    api_respond @people.to_xml(:root => 'people')
   end
 
   def show
-    respond_to do |f|
-      f.json  { render :as_json => @person.to_xml }
-    end
+    api_respond @person.to_xml
   end
   
   def update
-    respond_to do |f|
-      if !@current_project.owner?(@person.user) && @person.update_attributes(params[:person])
-        handle_api_success(f, @person)
-      else
-        handle_api_error(f, @person)
-      end
+    if !@current_project.owner?(@person.user) && @person.update_attributes(params[:person])
+      handle_api_success(@person)
+    else
+      handle_api_error(@person)
     end
   end
 
   def destroy
-    has_permission = !@current_project.owner?(@person.user) && ((current_user == @person.user) or @current_project.admin?(current_user))
+    has_permission = !@current_project.owner?(@person.user) && ((current_user == @person.user) or 
+                      @current_project.admin?(current_user))
     if has_permission
       @person.destroy
-    end
-    respond_to do |f|
-      if has_permission
-        handle_api_success(f,@person)
-      else
-        handle_api_error(f, @person, :status => :unauthorized)
-      end
+      handle_api_success(@person)
+    else
+      handle_api_error(@person, :status => :unauthorized)
     end
   end
 
@@ -44,7 +35,7 @@ class ApiV1::PeopleController < ApiV1::APIController
   
   def load_person
     @person = @current_project.people.find params[:id]
-    return api_status(:not_found) if @person.nil?
+    api_status(:not_found) unless @person
   end
   
   def check_permissions

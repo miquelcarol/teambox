@@ -10,15 +10,11 @@ class ApiV1::TasksController < ApiV1::APIController
       @tasks = Task.find_all_by_project_id(current_user.project_ids, :conditions => api_range)
     end
     
-    respond_to do |f|
-      f.json  { render :as_json => @tasks.to_xml(:root => 'tasks') }
-    end
+    api_respond @tasks.to_xml(:root => 'tasks')
   end
 
   def show
-    respond_to do |f|
-      f.json  { render :as_json => @task.to_xml }
-    end
+    api_respond @task.to_xml
   end
   
   def create
@@ -29,46 +25,36 @@ class ApiV1::TasksController < ApiV1::APIController
       end
     end
     
-    respond_to do |f|
-      if !@task.new_record?
-        handle_api_success(f, @task, :is_new => true)
-      else
-        handle_api_error(f, @task)
-      end
+    if @task.new_record?
+      handle_api_error(@task)
+    else
+      handle_api_success(@task, :is_new => true)
     end
   end
   
   def update
     @saved = @task.update_attributes(params[:task])
     
-    respond_to do |f|
-      if @saved
-        handle_api_success(f, @task)
-      else
-        handle_api_error(f, @task)
-      end
+    if @saved
+      handle_api_success(@task)
+    else
+      handle_api_error(@task)
     end
   end
 
   def destroy
     @task.destroy
-    respond_to do |f|
-      handle_api_success(f, @task)
-    end
+    handle_api_success(@task)
   end
 
   def watch
     @task.add_watcher(current_user)
-    respond_to do |f|
-      handle_api_success(f, @task)
-    end
+    handle_api_success(@task)
   end
 
   def unwatch
     @task.remove_watcher(current_user)
-    respond_to do |f|
-      handle_api_success(f, @task)
-    end
+    handle_api_success(@task)
   end
   
   def reorder
@@ -87,19 +73,18 @@ class ApiV1::TasksController < ApiV1::APIController
   protected
   
   def load_task
-    if @current_project
-      @task = (@task_list || @current_project).tasks.find(params[:id]) rescue nil
+    @task = if @current_project
+      (@task_list || @current_project).tasks.find(params[:id]) rescue nil
     else
-      @task = Task.find(params[:id], :conditions => {:project_id => current_user.project_ids})
+      Task.find(params[:id], :conditions => {:project_id => current_user.project_ids})
     end
-    return api_status(:not_found) if @task.nil?
+    api_status(:not_found) unless @task
   end
   
   def check_permissions
     # Can they even edit the project?
     unless @current_project.editable?(current_user)
       api_error(t('common.not_allowed'), :unauthorized)
-      return false
     end
   end
 end
