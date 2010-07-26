@@ -39,7 +39,7 @@ describe ApiV1::UploadsController do
       
       get :show, :project_id => @project.permalink, :id => @upload.id
       response.should be_success
-      p response.body
+      
       JSON.parse(response.body)['file']['id'].should == @upload.id.to_s
     end
   end
