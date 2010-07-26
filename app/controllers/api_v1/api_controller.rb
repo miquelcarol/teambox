@@ -1,5 +1,5 @@
 class ApiV1::APIController < ApplicationController
-  skip_before_filter :rss_token, :recent_projects, :touch_user
+  skip_before_filter :rss_token, :recent_projects, :touch_user, :verify_authenticity_token
 
   API_LIMIT = 25
 
