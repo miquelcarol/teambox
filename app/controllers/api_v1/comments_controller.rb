@@ -86,7 +86,7 @@ class ApiV1::CommentsController < ApiV1::APIController
     end
     
     def check_timeless
-      if (action_name == 'edit' && params[:part] == 'task') || action_name == 'convert'
+      if action_name == 'convert'
         @checks_time = false
       end
     end
@@ -95,7 +95,7 @@ class ApiV1::CommentsController < ApiV1::APIController
       # Can they even create comments?
       if @comment
         @has_permission = true
-        @checks_time = @checks_time.nil?
+        @checks_time = true if @checks_time.nil?
         
         if action_name == 'destroy'
           return if @comment.can_destroy?(current_user, @checks_time)
@@ -104,10 +104,6 @@ class ApiV1::CommentsController < ApiV1::APIController
         else
           return if @comment.can_edit?(current_user, @checks_time)
         end
-        
-        # Error update handled in rjs handlers
-        @has_permission = false
-        return if request.format == :js
         
         # Process of elimination: don't allow this!
         api_error(t('comments.errors.cannot_update'), :unauthorized)

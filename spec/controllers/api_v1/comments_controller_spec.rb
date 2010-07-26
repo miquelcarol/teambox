@@ -71,7 +71,7 @@ describe ApiV1::CommentsController do
       
       @comment.update_attribute(:created_at, Time.now - 16.minutes)
       
-      put :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated!'}
+      put :update, :project_id => @project.permalink, :id => @comment.id, :comment => {:body => 'Updated FAIL!'}
       response.status.should == '401 Unauthorized'
     end
     
