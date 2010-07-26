@@ -68,6 +68,22 @@ def generate_file(filename, size = 1024)
   File.open(filename,"wb") { |f| f.seek(size-1); f.write("\0") }
 end
 
+def mock_uploader(file, type = 'image/png', data=nil)
+  uploader = ActionController::UploadedStringIO.new
+  unless data.nil?
+    uploader.write(data)
+    uploader.seek(0)
+    uploader.original_path = file
+  else
+    uploader.original_path = "%s/%s" % [ File.dirname(__FILE__), file ]
+    uploader.write(File.read(uploader.original_path))
+    uploader.seek(0)
+  end
+  
+  uploader.content_type = type
+  uploader
+end
+
 def make_a_typical_project
     @user = Factory.create(:confirmed_user)
     @project = Factory.create(:project)
