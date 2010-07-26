@@ -66,6 +66,25 @@ class ApiV1::APIController < ApplicationController
     end
   end
   
+  def api_limit
+    params[:count] || 25
+  end
+  
+  def api_range
+    since_id = params[:since_id]
+    max_id = params[:max_id]
+    
+    if since_id and max_id
+      ['id > ? AND id < ?', since_id, max_id]
+    elsif since_id
+      ['id > ?', since_id]
+    elsif max_id
+      ['id < ?', max_id]
+    else
+      []
+    end
+  end
+  
   def set_client
     request.format = 'json'
   end

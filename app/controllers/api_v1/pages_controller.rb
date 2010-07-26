@@ -4,9 +4,9 @@ class ApiV1::PagesController < ApiV1::APIController
   
   def index
     if @current_project
-      @pages = @current_project.pages
+      @pages = @current_project.pages.all(:conditions => api_range, :limit => api_limit)
     else
-      @pages = current_user.projects.collect { |p| p.pages }
+      @pages = Page.find_all_by_project_id(current_user.project_ids, :conditions => api_range, :limit => api_limit)
     end
     
     respond_to do |f|

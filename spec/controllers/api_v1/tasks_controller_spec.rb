@@ -47,6 +47,15 @@ describe ApiV1::TasksController do
       
       JSON.parse(response.body)['tasks'].length.should == 3
     end
+    
+    it "limits and offsets tasks" do
+      login_as @user
+      
+      get :index, :since_id => @task.id, :count => 1
+      response.should be_success
+      
+      JSON.parse(response.body)['tasks'].map{|a| a['id'].to_i}.should == [@other_task.id]
+    end
   end
   
   describe "#show" do

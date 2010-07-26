@@ -3,7 +3,7 @@ class ApiV1::TaskListsController < ApiV1::APIController
   before_filter :check_permissions, :only => [:create,:update,:destroy,:archive,:unarchive]
   
   def index
-    @task_lists = @current_project.task_lists
+    @task_lists = @current_project.task_lists.all(:conditions => api_range, :limit => api_limit)
     
     respond_to do |f|
       f.json  { render :as_json => @task_lists.to_xml(:include => :tasks, :root => 'task-lists') }

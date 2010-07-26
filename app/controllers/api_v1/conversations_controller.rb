@@ -3,7 +3,7 @@ class ApiV1::ConversationsController < ApiV1::APIController
   before_filter :check_permissions, :only => [:create,:update,:destroy,:watch,:unwatch]
   
   def index
-    @conversations = @current_project.conversations
+    @conversations = @current_project.conversations.all(:conditions => api_range, :limit => api_limit)
     
     respond_to do |f|
       f.json  { render :as_json => @conversations.to_xml(:root => 'conversations') }

@@ -1,9 +1,13 @@
 class ApiV1::ActivitiesController < ApiV1::APIController
-  skip_before_filter :api_load_project, :touch_user
+  skip_before_filter :touch_user
   before_filter :get_target
 
   def index
-    @activities = Project.get_activities_for @target
+    projects = params[:project_id] ? @current_project.id : current_user.project_ids
+
+    @activities = Activity.find_all_by_project_id(projects, :conditions => api_range,
+                        :order => 'id DESC',
+                        :limit => api_limit)
     
     respond_to do |format|
       format.json { render :as_json => @activities.to_xml(:root => 'activities') }

@@ -17,6 +17,18 @@ describe ApiV1::TaskListsController do
       
       JSON.parse(response.body)['task_lists'].length.should == 1
     end
+    
+    it "limits and offsets task lists" do
+      login_as @user
+      
+      other_list = @project.create_task_list(@user, {:name => 'Limited TODO list'})
+      other_list.save!
+      
+      get :index, :project_id => @project.permalink, :since_id => @project.task_list_ids[1], :count => 1
+      response.should be_success
+      
+      JSON.parse(response.body)['task_lists'].map{|a| a['id'].to_i}.should == [@project.reload.task_list_ids[0]]
+    end
   end
   
   describe "#show" do

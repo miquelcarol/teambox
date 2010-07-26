@@ -17,6 +17,31 @@ describe ApiV1::PagesController do
       
       JSON.parse(response.body)['pages'].length.should == 1
     end
+    
+    it "shows pages in all projects" do
+      login_as @user
+      
+      other_project = Factory.create(:project)
+      other_page = @project.new_page(other_project.user, {:name => 'Important plans!'})
+      other_page.save!
+      
+      get :index
+      response.should be_success
+      
+      JSON.parse(response.body)['pages'].length.should == 2
+    end
+    
+    it "limits and offsets pages" do
+      login_as @user
+      
+      other_page = @project.new_page(@user, {:name => 'Phone numbers'})
+      other_page.save!
+      
+      get :index, :project_id => @project.permalink, :since_id => @project.page_ids[1], :count => 1
+      response.should be_success
+      
+      JSON.parse(response.body)['pages'].map{|a| a['id'].to_i}.should == [@project.reload.page_ids[0]]
+    end
   end
   
   describe "#show" do

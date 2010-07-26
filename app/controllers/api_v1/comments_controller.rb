@@ -5,7 +5,7 @@ class ApiV1::CommentsController < ApiV1::APIController
   before_filter :check_permissions, :only => [:create, :update, :convert]
   
   def index
-    @comments = @target.comments
+    @comments = @target.comments.all(:conditions => api_range, :limit => api_limit)
     
     respond_to do |f|
       f.json  { render :as_json => @comments.to_xml(:root => 'comments') }

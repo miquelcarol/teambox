@@ -5,7 +5,7 @@ class ApiV1::InvitationsController < ApiV1::APIController
   before_filter :load_invite, :except => [:index]
   
   def index
-    @invitations = @target.invitations
+    @invitations = @target.invitations.all(:conditions => api_range, :limit => api_limit)
     
     respond_to do |f|
       f.json  { render :as_json => @invitations.to_xml(:root => 'invitations') }

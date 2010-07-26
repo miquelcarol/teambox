@@ -17,6 +17,18 @@ describe ApiV1::CommentsController do
       
       JSON.parse(response.body)['comments'].length.should == 1
     end
+    
+    it "limits and offsets comments" do
+      login_as @user
+      
+      other_comment = @project.new_comment(@user, @project, {:body => 'Something else happened!'})
+      other_comment.save!
+      
+      get :index, :project_id => @project.permalink, :since_id => @project.comment_ids[1], :count => 1
+      response.should be_success
+      
+      JSON.parse(response.body)['comments'].map{|a| a['id'].to_i}.should == [@project.reload.comment_ids[0]]
+    end
   end
   
   describe "#show" do

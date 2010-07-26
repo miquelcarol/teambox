@@ -5,9 +5,9 @@ class ApiV1::TasksController < ApiV1::APIController
   
   def index
     if @current_project
-      @tasks = (@task_list || @current_project).tasks
+      @tasks = (@task_list || @current_project).tasks.all(:conditions => api_range, :limit => api_limit)
     else
-      @tasks = Task.find(:all, :conditions => {:project_id => current_user.project_ids})
+      @tasks = Task.find_all_by_project_id(current_user.project_ids, :conditions => api_range)
     end
     
     respond_to do |f|

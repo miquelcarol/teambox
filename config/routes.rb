@@ -129,6 +129,7 @@ ActionController::Routing::Routes.draw do |map|
     api.resources :invitations, :member => [:accept]
     api.resources :users
     api.resources :tasks, :member => [:watch, :unwatch]
+    api.resources :pages
   end
   
   map.resources :task_lists, :only => [ :index ], :collection => { :gantt_view => :get }

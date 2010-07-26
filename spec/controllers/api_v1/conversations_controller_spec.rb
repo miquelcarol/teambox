@@ -18,6 +18,19 @@ describe ApiV1::ConversationsController do
       
       JSON.parse(response.body)['conversations'].length.should == 1
     end
+    
+    it "limits and offsets conversations" do
+      login_as @user
+      
+      other_conversation = @project.new_conversation(@user, {:name => 'Something else needs to be done'})
+      other_conversation.body = 'Hell yes!'
+      other_conversation.save!
+      
+      get :index, :project_id => @project.permalink, :since_id => @project.reload.conversation_ids[-1], :count => 1
+      response.should be_success
+      
+      JSON.parse(response.body)['conversations'].map{|a| a['id'].to_i}.should == [@project.reload.conversation_ids[0]]
+    end
   end
   
   describe "#show" do
