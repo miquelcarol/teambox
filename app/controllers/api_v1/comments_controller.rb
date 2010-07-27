@@ -67,7 +67,25 @@ class ApiV1::CommentsController < ApiV1::APIController
   end
   
   def convert
-    # !!!
+    if request.method == :put and @has_permission and @comment.target.class == Project and @target.class == TaskList and !@target.archived
+      # Make a new task in the target...
+      task_name = params[:task].nil? ? nil : params[:task][:name]
+      params = {
+        'name' => task_name || @comment.body.split('\n').first
+      }
+      @task = @current_project.create_task(current_user,@target,params)
+      
+      if @task.errors.empty?
+        @comment.target = @task
+        @comment.save
+      end
+    end
+    
+    if @task and !@task.new_record?
+      handle_api_success(@task, :is_new => true)
+    else
+      handle_api_error(@task)
+    end
   end
 
   protected

@@ -62,6 +62,35 @@ describe ApiV1::CommentsController do
     end
   end
   
+  describe "#convert" do
+    it "should allow commenters to convert a comment into a task" do
+      login_as @project.user
+      
+      task_list = @project.create_task_list(@owner, {:name => 'A TODO list'})
+      task_list.save!
+      
+      put :convert, :project_id => @project.permalink, :id => @comment.id, :task_list_id => task_list.id, :task => {:name => 'Created!'}
+      response.should be_success
+      
+      JSON.parse(response.body)['id'].to_i.should == @project.tasks(true).last.id
+      @comment.reload.target.task_list.should == task_list
+      @project.tasks.length.should == 1
+    end
+    
+    it "should not allow observers to convert a comment into a task" do
+      login_as @observer
+      
+      task_list = @project.create_task_list(@owner, {:name => 'A TODO list'})
+      task_list.save!
+      
+      put :convert, :project_id => @project.permalink, :id => @comment.id,:task_list_id => task_list.id, :task => {:name => 'Created!'}
+      response.status.should == '401 Unauthorized'
+      
+      @comment.reload.target.should == @project
+      @project.tasks.length.should == 0
+    end
+  end
+  
   describe "#update" do
     it "should allow the owner to modify a comment within 15 minutes" do
       login_as @user
