@@ -75,4 +75,17 @@ class Person < ActiveRecord::Base
       xml.tag! 'role', role
     end
   end
+  
+  def to_api_hash(options = {})
+    {
+      :id => id,
+      :user_id => user.id,
+      :username => user.login,
+      :role => role
+    }
+  end
+  
+  def to_json(options = {})
+    to_api_hash(options).to_json
+  end
 end

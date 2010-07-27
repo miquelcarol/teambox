@@ -5,11 +5,11 @@ class ApiV1::UploadsController < ApiV1::APIController
   def index
     @uploads = @current_project.uploads.all(:conditions => api_range, :limit => api_limit)
     
-    api_respond @uploads.to_xml(:root => 'uploads')
+    api_respond @uploads.to_json
   end
 
   def show
-    api_respond @upload.to_xml
+    api_respond @upload.to_json
   end
   
   def create

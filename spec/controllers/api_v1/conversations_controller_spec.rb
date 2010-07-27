@@ -16,7 +16,7 @@ describe ApiV1::ConversationsController do
       get :index, :project_id => @project.permalink
       response.should be_success
       
-      JSON.parse(response.body)['conversations'].length.should == 1
+      JSON.parse(response.body).length.should == 1
     end
     
     it "limits and offsets conversations" do
@@ -29,7 +29,7 @@ describe ApiV1::ConversationsController do
       get :index, :project_id => @project.permalink, :since_id => @project.reload.conversation_ids[-1], :count => 1
       response.should be_success
       
-      JSON.parse(response.body)['conversations'].map{|a| a['id'].to_i}.should == [@project.reload.conversation_ids[0]]
+      JSON.parse(response.body).map{|a| a['id'].to_i}.should == [@project.reload.conversation_ids[0]]
     end
   end
   
@@ -40,7 +40,7 @@ describe ApiV1::ConversationsController do
       get :show, :project_id => @project.permalink, :id => @conversation.id
       response.should be_success
       
-      JSON.parse(response.body)['conversation']['id'].should == @conversation.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @conversation.id
     end
   end
   

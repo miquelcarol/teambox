@@ -15,7 +15,7 @@ describe ApiV1::TaskListsController do
       get :index, :project_id => @project.permalink
       response.should be_success
       
-      JSON.parse(response.body)['task_lists'].length.should == 1
+      JSON.parse(response.body).length.should == 1
     end
     
     it "limits and offsets task lists" do
@@ -27,7 +27,7 @@ describe ApiV1::TaskListsController do
       get :index, :project_id => @project.permalink, :since_id => @project.task_list_ids[1], :count => 1
       response.should be_success
       
-      JSON.parse(response.body)['task_lists'].map{|a| a['id'].to_i}.should == [@project.reload.task_list_ids[0]]
+      JSON.parse(response.body).map{|a| a['id'].to_i}.should == [@project.reload.task_list_ids[0]]
     end
   end
   
@@ -38,7 +38,7 @@ describe ApiV1::TaskListsController do
       get :show, :project_id => @project.permalink, :id => @task_list.id
       response.should be_success
       
-      JSON.parse(response.body)['task_list']['id'].should == @task_list.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @task_list.id
     end
   end
   

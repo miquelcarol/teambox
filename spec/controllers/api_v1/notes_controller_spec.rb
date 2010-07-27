@@ -20,7 +20,7 @@ describe ApiV1::NotesController do
       get :index, :project_id => @project.permalink, :page_id => @page.id
       response.should be_success
       
-      JSON.parse(response.body)['notes'].length.should == 1
+      JSON.parse(response.body).length.should == 1
     end
   end
   
@@ -31,7 +31,7 @@ describe ApiV1::NotesController do
       get :show, :project_id => @project.permalink, :page_id => @page.id, :id => @note.id
       response.should be_success
       
-      JSON.parse(response.body)['note']['id'].should == @note.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @note.id
     end
   end
   

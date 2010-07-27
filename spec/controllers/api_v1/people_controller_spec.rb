@@ -12,7 +12,7 @@ describe ApiV1::PeopleController do
       get :index, :project_id => @project.permalink
       response.should be_success
       
-      JSON.parse(response.body)['people'].length.should == 4
+      JSON.parse(response.body).length.should == 4
     end
   end
   
@@ -23,7 +23,7 @@ describe ApiV1::PeopleController do
       get :show, :project_id => @project.permalink, :id => @project.people.first.id
       response.should be_success
       
-      JSON.parse(response.body)['person']['id'].should == @project.people.first.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @project.people.first.id
     end
   end
   

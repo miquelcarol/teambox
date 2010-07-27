@@ -72,6 +72,22 @@ class Invitation < RoleRecord
   before_create :generate_token
   after_create :send_email
   before_save :copy_user_email, :if => :invited_user
+  
+  def to_api_hash(options = {})
+    {
+      :id => id,
+      :source_user_id => source_user_id,
+      :role => role,
+      :project => {
+        :permalink => project.permalink,
+        :name => project.name
+      }
+    }
+  end
+  
+  def to_json(options = {})
+    to_api_hash(options).to_json
+  end
 
   protected
 

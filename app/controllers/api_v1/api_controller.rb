@@ -43,7 +43,7 @@ class ApiV1::APIController < ApplicationController
   
   def api_respond(json)
     respond_to do |f|
-      f.json { render :as_json => json }
+      f.json { render :json => json }
     end
   end
   
@@ -70,7 +70,7 @@ class ApiV1::APIController < ApplicationController
   def handle_api_success(object,options={})
     respond_to do |f|
       if options.delete(:is_new) || false
-        f.json { render :as_json => object.to_xml, :status => options.delete(:status) || :created }
+        f.json { render :json => object.to_json, :status => options.delete(:status) || :created }
       else
         f.json { head(options.delete(:status) || :ok) }
       end

@@ -10,11 +10,11 @@ class ApiV1::TasksController < ApiV1::APIController
       @tasks = Task.find_all_by_project_id(current_user.project_ids, :conditions => api_range)
     end
     
-    api_respond @tasks.to_xml(:root => 'tasks')
+    api_respond @tasks.to_json
   end
 
   def show
-    api_respond @task.to_xml
+    api_respond @task.to_json
   end
   
   def create

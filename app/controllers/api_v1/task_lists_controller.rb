@@ -4,11 +4,11 @@ class ApiV1::TaskListsController < ApiV1::APIController
   
   def index
     @task_lists = @current_project.task_lists.all(:conditions => api_range, :limit => api_limit)
-    api_respond @task_lists.to_xml(:include => :tasks, :root => 'task-lists')
+    api_respond @task_lists.to_json(:include => :tasks)
   end
 
   def show
-    api_respond @task_list.to_xml(:include => [:tasks, :comments])
+    api_respond @task_list.to_json(:include => [:tasks, :comments])
   end
 
   def create

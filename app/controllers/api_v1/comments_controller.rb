@@ -7,11 +7,11 @@ class ApiV1::CommentsController < ApiV1::APIController
   def index
     @comments = @target.comments.all(:conditions => api_range, :limit => api_limit)
     
-    api_respond @comments.to_xml(:root => 'comments')
+    api_respond @comments.to_json
   end
 
   def show
-    api_respond @comment.to_xml
+    api_respond @comment.to_json
   end
   
   def create

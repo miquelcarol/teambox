@@ -7,11 +7,11 @@ class ApiV1::InvitationsController < ApiV1::APIController
   def index
     @invitations = @target.invitations.all(:conditions => api_range, :limit => api_limit)
     
-    api_respond @invitations.to_xml(:root => 'invitations')
+    api_respond @invitations.to_json
   end
 
   def show
-    api_respond @invitation.to_xml
+    api_respond @invitation.to_json
   end
   
   def create

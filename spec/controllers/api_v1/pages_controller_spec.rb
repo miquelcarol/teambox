@@ -15,7 +15,7 @@ describe ApiV1::PagesController do
       get :index, :project_id => @project.permalink
       response.should be_success
       
-      JSON.parse(response.body)['pages'].length.should == 1
+      JSON.parse(response.body).length.should == 1
     end
     
     it "shows pages in all projects" do
@@ -28,7 +28,7 @@ describe ApiV1::PagesController do
       get :index
       response.should be_success
       
-      JSON.parse(response.body)['pages'].length.should == 2
+      JSON.parse(response.body).length.should == 2
     end
     
     it "limits and offsets pages" do
@@ -40,7 +40,7 @@ describe ApiV1::PagesController do
       get :index, :project_id => @project.permalink, :since_id => @project.page_ids[1], :count => 1
       response.should be_success
       
-      JSON.parse(response.body)['pages'].map{|a| a['id'].to_i}.should == [@project.reload.page_ids[0]]
+      JSON.parse(response.body).map{|a| a['id'].to_i}.should == [@project.reload.page_ids[0]]
     end
   end
   
@@ -51,7 +51,7 @@ describe ApiV1::PagesController do
       get :show, :project_id => @project.permalink, :id => @page.id
       response.should be_success
       
-      JSON.parse(response.body)['page']['id'].should == @page.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @page.id
     end
   end
   

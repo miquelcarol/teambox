@@ -6,11 +6,11 @@ class ApiV1::DividersController < ApiV1::APIController
   def index
     @dividers = @page.dividers
     
-    api_respond @dividers.to_xml(:root => 'dividers')
+    api_respond @dividers.to_json
   end
 
   def show
-    api_respond @divider.to_xml
+    api_respond @divider.to_json
   end
   
   def create

@@ -213,6 +213,25 @@ class User < ActiveRecord::Base
       xml.tag! 'avatar-url', avatar_or_gravatar_url(:thumb)
     end
   end
+  
+  def to_api_hash(options = {})
+    {
+      :id => id,
+      :first_name => first_name,
+      :last_name => last_name,
+      :language => language,
+      :username => login,
+      :time_zone => time_zone,
+      :biography => biography,
+      :created_at => created_at.to_s(:db),
+      :updated_at => updated_at.to_s(:db),
+      :avatar_url => avatar_or_gravatar_url(:thumb)
+    }
+  end
+  
+  def to_json(options = {})
+    to_api_hash(options).to_json
+  end
 
   def self.send_daily_task_reminders
     tzs = time_zones_to_send_daily_task_reminders_to

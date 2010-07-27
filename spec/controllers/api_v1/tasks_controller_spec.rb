@@ -23,7 +23,7 @@ describe ApiV1::TasksController do
       get :index, :project_id => @project.permalink
       response.should be_success
       
-      JSON.parse(response.body)['tasks'].length.should == 2
+      JSON.parse(response.body).length.should == 2
     end
     
     it "shows tasks in a task list" do
@@ -32,7 +32,7 @@ describe ApiV1::TasksController do
       get :index, :project_id => @project.permalink, :task_list_id => @task_list.id
       response.should be_success
       
-      JSON.parse(response.body)['tasks'].map{|t| t['id'].to_i}.sort.should == @task_list.task_ids.sort
+      JSON.parse(response.body).map{|t| t['id'].to_i}.sort.should == @task_list.task_ids.sort
     end
     
     it "shows tasks in all the users projects" do
@@ -45,7 +45,7 @@ describe ApiV1::TasksController do
       get :index
       response.should be_success
       
-      JSON.parse(response.body)['tasks'].length.should == 3
+      JSON.parse(response.body).length.should == 3
     end
     
     it "limits and offsets tasks" do
@@ -54,7 +54,7 @@ describe ApiV1::TasksController do
       get :index, :since_id => @task.id, :count => 1
       response.should be_success
       
-      JSON.parse(response.body)['tasks'].map{|a| a['id'].to_i}.should == [@other_task.id]
+      JSON.parse(response.body).map{|a| a['id'].to_i}.should == [@other_task.id]
     end
   end
   
@@ -65,7 +65,7 @@ describe ApiV1::TasksController do
       get :show, :project_id => @project.permalink, :id => @task.id
       response.should be_success
       
-      JSON.parse(response.body)['task']['id'].should == @task.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @task.id
     end
     
     it "shows a task in a task list" do
@@ -74,7 +74,7 @@ describe ApiV1::TasksController do
       get :show, :project_id => @project.permalink, :task_list_id => @task_list.id, :id => @task.id
       response.should be_success
       
-      JSON.parse(response.body)['task']['id'].should == @task.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @task.id
     end
     
     it "does not show a task in another list" do

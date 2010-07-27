@@ -15,7 +15,7 @@ describe ApiV1::CommentsController do
       get :index, :project_id => @project.permalink
       response.should be_success
       
-      JSON.parse(response.body)['comments'].length.should == 1
+      JSON.parse(response.body).length.should == 1
     end
     
     it "limits and offsets comments" do
@@ -27,7 +27,7 @@ describe ApiV1::CommentsController do
       get :index, :project_id => @project.permalink, :since_id => @project.comment_ids[1], :count => 1
       response.should be_success
       
-      JSON.parse(response.body)['comments'].map{|a| a['id'].to_i}.should == [@project.reload.comment_ids[0]]
+      JSON.parse(response.body).map{|a| a['id'].to_i}.should == [@project.reload.comment_ids[0]]
     end
   end
   
@@ -38,7 +38,7 @@ describe ApiV1::CommentsController do
       get :show, :project_id => @project.permalink, :id => @comment.id
       response.should be_success
       
-      JSON.parse(response.body)['comment']['id'].should == @comment.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @comment.id
     end
   end
   

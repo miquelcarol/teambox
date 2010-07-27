@@ -11,7 +11,7 @@ describe ApiV1::ProjectsController do
       
       get :index
       response.should be_success
-      JSON.parse(response.body)['projects'].length.should == 1
+      JSON.parse(response.body).length.should == 1
     end
     
     it "does not show projects the user doesn't belong to" do
@@ -19,7 +19,7 @@ describe ApiV1::ProjectsController do
       
       get :index
       response.should be_success
-      JSON.parse(response.body)['projects'].length.should == 0
+      JSON.parse(response.body).length.should == 0
     end
   end
   
@@ -90,7 +90,7 @@ describe ApiV1::ProjectsController do
       
       get :show, :id => @project.permalink
       response.should be_success
-      JSON.parse(response.body)['project']['id'].should == @project.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @project.id
     end
     
     it "should not show a project the user doesn't belong to" do

@@ -16,7 +16,7 @@ describe ApiV1::UsersController do
       get :show, :id => @project.user.login
       response.should be_success
       
-      JSON.parse(response.body)['user']['id'].should == @project.user.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @project.user.id
     end
     
     it "shows a user by id" do
@@ -25,7 +25,7 @@ describe ApiV1::UsersController do
       get :show, :id => @project.user.id
       response.should be_success
       
-      JSON.parse(response.body)['user']['id'].should == @project.user.id.to_s
+      JSON.parse(response.body)['id'].to_i.should == @project.user.id
     end
     
     it "does not show a user not known to the current user" do

@@ -9,7 +9,7 @@ class ApiV1::ActivitiesController < ApiV1::APIController
                         :order => 'id DESC',
                         :limit => api_limit)
 
-    api_respond(@activities.to_xml(:root => 'activities'))
+    api_respond(@activities.to_json(:include => [:project, :target]))
   end
 
   def show
@@ -20,7 +20,7 @@ class ApiV1::ActivitiesController < ApiV1::APIController
     end
     
     if current_user.project_ids.include? @activity.project_id
-      api_respond(@activity.to_xml)
+      api_respond(@activity.to_json(:include => [:project, :target]))
     else
       api_status(:unauthorized)
     end
@@ -37,6 +37,19 @@ class ApiV1::ActivitiesController < ApiV1::APIController
       unless @target
         api_status(:not_found)
       end
+    end
+    
+    def fields_for_object
+      {:only => [:id,
+                 :project_id,
+                 :action,
+                 :created_at,
+                 :updated_at,
+                 :target_id,
+                 :target_type],
+      :include => {:user => {:only => [:id, :username, :first_name, :last_name], :methods => [:avatar_or_gravatar_url]},
+                   :project => {:only => [:id, :name, :permalink]}}
+      }
     end
   
 end
