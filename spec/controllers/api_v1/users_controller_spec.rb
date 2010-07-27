@@ -52,4 +52,24 @@ describe ApiV1::UsersController do
       response.status.should == '401 Unauthorized'
     end
   end
+  
+  describe "#current" do
+    it "shows the current user" do
+      login_as @user
+      
+      get :current
+      response.should be_success
+      
+      JSON.parse(response.body)['id'].to_i.should == @user.id
+    end
+    
+    it "really shows the current user" do
+      login_as @fred
+      
+      get :current
+      response.should be_success
+      
+      JSON.parse(response.body)['id'].to_i.should == @fred.id
+    end
+  end
 end

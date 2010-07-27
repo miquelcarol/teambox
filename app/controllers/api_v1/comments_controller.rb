@@ -16,6 +16,17 @@ class ApiV1::CommentsController < ApiV1::APIController
   
   def create
     owner = params.has_key?(:project_id) ? @current_project : current_user
+    if @target.is_a? Task
+      @target.previous_status = @target.status
+      @target.previous_assigned_id = @target.assigned_id
+      if params[:comment]
+        @target.status = params[:comment][:status]
+        if params[:comment][:target_attributes]
+          @target.assigned_id = params[:comment][:target_attributes][:assigned_id]
+        end
+      end
+    end
+    
     @comment = owner.new_comment(current_user,@target,params[:comment])
 
     # If this is a status update, we'll turn it in a new `simple` Conversation
@@ -134,14 +145,7 @@ class ApiV1::CommentsController < ApiV1::APIController
 
     def assign_project_target
       if params.has_key?(:task_id)
-        t = @current_project.tasks.find(params[:task_id])
-        t.previous_status = t.status
-        t.previous_assigned_id = t.assigned_id
-        t.status = params[:comment][:status]
-        if params[:comment][:target_attributes]
-          t.assigned_id = params[:comment][:target_attributes][:assigned_id]
-        end
-        t
+        @current_project.tasks.find(params[:task_id])
       elsif params.has_key?(:task_list_id)
         @current_project.task_lists.find(params[:task_list_id])
       elsif params.has_key?(:conversation_id)

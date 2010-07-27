@@ -18,6 +18,19 @@ describe ApiV1::CommentsController do
       JSON.parse(response.body).length.should == 1
     end
     
+    it "shows comments on a task" do
+      login_as @user
+      
+      task = Factory.create(:task, :project => @project)
+      comment = @project.new_comment(@user, task, {:body => 'Something happened!'})
+      comment.save!
+      
+      get :index, :project_id => @project.permalink, :task_id => task.id
+      response.should be_success
+      p task.comment_ids.sort
+      JSON.parse(response.body).map{|a| a['id'].to_i}.should == task.comment_ids.sort
+    end
+    
     it "limits and offsets comments" do
       login_as @user
       
@@ -50,6 +63,30 @@ describe ApiV1::CommentsController do
       response.should be_success
       
       @project.comments(true).length.should == 2
+    end
+    
+    it "show allow commenters to post a comment in a task" do
+      login_as @project.user
+      
+      task = Factory.create(:task, :project => @project)
+      task.comments.length.should == 0
+      
+      post :create, :project_id => @project.permalink, :task_id => task.id, :comment => {:body => 'Created!'}
+      response.should be_success
+      
+      task.reload.comments.length.should == 1
+    end
+    
+    it "show allow commenters to post a comment in a conversation" do
+      login_as @project.user
+      
+      conversation = Factory.create(:conversation, :project => @project)
+      conversation.comments.length.should == 1
+      
+      post :create, :project_id => @project.permalink, :conversation_id => conversation.id, :comment => {:body => 'Created!'}
+      response.should be_success
+      
+      conversation.reload.comments.length.should == 2
     end
     
     it "should not allow observers to post a comment" do

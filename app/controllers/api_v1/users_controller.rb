@@ -16,6 +16,11 @@ class ApiV1::UsersController < ApiV1::APIController
       api_respond @user.to_json
     end
   end
+  
+  def current
+    @user = current_user
+    show
+  end
 
   protected
   

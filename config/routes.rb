@@ -116,10 +116,16 @@ ActionController::Routing::Routes.draw do |map|
       project.resources :activities
       project.resources :people
       project.resources :comments, :member => [:convert]
-      project.resources :conversations, :member => [:watch, :unwatch]
+      project.resources :conversations, :member => [:watch, :unwatch] do |conversation|
+        conversation.resources :comments
+      end
       project.resources :invitations, :member => [:resend, :accept]
-      project.resources :task_lists, :member => [:watch, :unwatch, :archive, :unarchive], :collection => [:reorder]
-      project.resources :tasks, :member => [:watch, :unwatch], :collection => [:reorder]
+      project.resources :task_lists, :member => [:watch, :unwatch, :archive, :unarchive], :collection => [:reorder] do |task_list|
+        task_list.resources :tasks
+      end
+      project.resources :tasks, :member => [:watch, :unwatch], :collection => [:reorder] do |task|
+        task.resources :comments
+      end
       project.resources :uploads
       project.resources :pages, :member => [:reorder]
       project.resources :notes
@@ -130,6 +136,8 @@ ActionController::Routing::Routes.draw do |map|
     api.resources :users
     api.resources :tasks, :member => [:watch, :unwatch]
     api.resources :pages
+    
+    api.account 'account', :controller => 'users', :action => 'current'
   end
   
   map.resources :task_lists, :only => [ :index ], :collection => { :gantt_view => :get }
