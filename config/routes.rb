@@ -110,6 +110,11 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.resources :comments, :only => [ :create ]
+
+  map.with_options :controller => 'apidocs' do |doc|
+    doc.api           'api',          :action => 'index'
+    doc.api_concepts  'api/concepts', :action => 'concepts'
+  end
   
   map.namespace(:api_v1, :path_prefix => 'api/1') do |api|
     api.resources :projects, :member => [:transfer] do |project|

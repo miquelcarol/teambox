@@ -1,0 +1,27 @@
+!!! Strict
+%html{ :xmlns => "http://www.w3.org/1999/xhtml", 'xml:lang'=>"en", :lang=>"en" }
+  %head
+    %meta{ 'http-equiv' => "content-type", :content => "text/html;charset=utf-8" }
+    = csrf_meta_tag
+    %link{ :rel => "shortcut icon", :href => "/favicon.ico" }
+    %title Teambox
+    = stylesheet_link_tag 'apidocs'
+    = sprockets_include_tag
+
+  %body{ :class => "#{location_name} #{I18n.locale} #{Rails.env}"}
+    = javascript_include_tag 'modernizr'
+    .container
+      .wrapper
+        #header
+          = link_to image_tag('teambox-logo.gif', :alt => 'Teambox logo', :style => 'float:right'), root_path
+          %h1 API documentation
+          .clear
+        .content
+          - show_flash
+          = yield
+        .column
+          #sidebar
+            = yield :column
+      .footer
+        %p.copyright Copyright &copy; 2010 Teambox. All rights reserved
+      = javascripts
