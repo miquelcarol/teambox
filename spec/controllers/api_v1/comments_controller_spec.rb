@@ -27,7 +27,7 @@ describe ApiV1::CommentsController do
       
       get :index, :project_id => @project.permalink, :task_id => task.id
       response.should be_success
-      p task.comment_ids.sort
+      
       JSON.parse(response.body).map{|a| a['id'].to_i}.should == task.comment_ids.sort
     end
     
