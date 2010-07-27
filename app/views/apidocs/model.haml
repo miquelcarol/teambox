@@ -1,0 +1,25 @@
+%h2= @model.new.class.to_s
+
+%p= "Comments about this model here"
+
+%h3 URL Structure
+
+%code http://teambox.com/api/1/something
+
+%h3 Methods
+%p GET, POST
+
+%h3 Parameters
+%p callback - Optional. ...
+%p from_path - Required. ...
+
+%h3 Returns
+%p Upon success, ...
+
+%h3 Error Codes
+%p 400 Operation attempted not allowed by XXX.
+%p 403 Operation forbidden.
+%p 404 Model not found.
+%p Add something for permission denied
+
+= render 'apidocs/column'

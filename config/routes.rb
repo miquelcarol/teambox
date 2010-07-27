@@ -114,6 +114,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :controller => 'apidocs' do |doc|
     doc.api           'api',          :action => 'index'
     doc.api_concepts  'api/concepts', :action => 'concepts'
+    doc.api_model     'api/:model',   :action => 'model'
   end
   
   map.namespace(:api_v1, :path_prefix => 'api/1') do |api|
