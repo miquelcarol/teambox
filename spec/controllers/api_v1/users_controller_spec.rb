@@ -9,6 +9,23 @@ describe ApiV1::UsersController do
     @project.add_user(@user)
   end
   
+  describe "#index" do
+    it "shows all users known to the current user" do
+      login_as @user
+      other_project = Factory.create(:project)
+      
+      get :index
+      response.should be_success
+
+      users_expected = @user.users_with_shared_projects.map(&:id).sort
+      users_found = JSON.parse(response.body).map{|u|u['id'].to_i}.sort
+
+      users_found.should == users_expected
+      users_found.include?(@owner.id).should == true
+      users_found.include?(other_project.user.id).should_not == true
+    end
+  end
+  
   describe "#show" do
     it "shows a user by name" do
       login_as @user

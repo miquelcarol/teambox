@@ -3,6 +3,7 @@ class ApiV1::UsersController < ApiV1::APIController
   skip_before_filter :load_project
   
   def index
+    api_respond current_user.users_with_shared_projects.map{|u| u.to_api_hash}.to_json
   end
 
   def show
