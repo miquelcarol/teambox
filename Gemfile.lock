@@ -10,10 +10,6 @@ dependencies:
     group: 
     - :rails
     version: ~> 0.3.12
-  fastercsv: 
-    group: 
-    - :default
-    version: ">= 0"
   vestal_versions: 
     group: 
     - :plugins
@@ -36,12 +32,6 @@ dependencies:
     version: ~> 1.1.3
     require: 
     - libxml
-  ruby-openid-apps-discovery: 
-    group: 
-    - :default
-    version: ~> 1.01
-    require: 
-    - gapps_openid
   pg: 
     group: 
     - :pg
@@ -54,18 +44,16 @@ dependencies:
     version: ~> 1.1.5
     require: []
 
+  sprockets-rails: 
+    group: 
+    - :plugins
+    version: ~> 0.0.1
   mysql: 
     group: 
     - :mysql
     version: ~> 2.8.1
     require: []
 
-  ruby-openid: 
-    group: 
-    - :default
-    version: ~> 2.1.7
-    require: 
-    - openid
   SystemTimer: 
     group: 
     - :default
@@ -82,36 +70,34 @@ dependencies:
     group: 
     - :default
     version: ~> 3.0.0.beta1
-  sprockets-rails: 
+  ruby-openid: 
     group: 
-    - :plugins
-    version: ~> 0.0.1
+    - :default
+    version: ">= 0"
   sqlite3-ruby: 
     group: 
     - :development
     version: ~> 1.2.5
     require: []
 
-  newrelic_rpm: 
-    group: 
-    - :plugins
-    version: ~> 2.10.6
-  calendar_date_select: 
-    group: 
-    - :plugins
-    version: ~> 1.15
-  garb: 
-    group: 
-    - :default
-    version: ~> 0.7.4
-  rspreedly: 
-    group: 
-    - :default
-    version: ~> 0.1.11
   oauth: 
     group: 
     - :default
     version: ">= 0"
+  geonames: 
+    group: 
+    - :default
+    version: ">= 0"
+  calendar_date_select: 
+    group: 
+    - :plugins
+    version: ~> 1.15
+  acts-as-list: 
+    group: 
+    - :plugins
+    version: ~> 0.1.2
+    require: 
+    - acts_as_list
   tmail: 
     group: 
     - :rails
@@ -122,20 +108,14 @@ dependencies:
     version: ~> 0.4.1
     require: []
 
-  delayed_job: 
-    group: 
-    - :default
-    version: ~> 2.0.3
-  acts-as-list: 
-    group: 
-    - :plugins
-    version: ~> 0.1.2
-    require: 
-    - acts_as_list
   database_cleaner: 
     group: 
     - :testing
     version: ~> 0.5.0
+  rack-openid: 
+    group: 
+    - :default
+    version: ">= 0"
   thinking-sphinx: 
     group: 
     - :plugins
@@ -162,24 +142,18 @@ dependencies:
     group: 
     - :plugins
     version: ">= 0"
-  json: 
-    group: 
-    - :default
-    version: ">= 0"
   paperclip: 
     group: 
     - :plugins
     version: ~> 2.3.1.1
+  json: 
+    group: 
+    - :default
+    version: ">= 0"
   icalendar: 
     group: 
     - :default
     version: ~> 1.1.3
-  hoptoad_notifier: 
-    group: 
-    - :plugins
-    version: ~> 2.2.2
-    require: 
-    - hoptoad_notifier/rails
   rdiscount: 
     group: 
     - :default
@@ -214,16 +188,6 @@ dependencies:
     group: 
     - :testing
     version: ~> 0.3.5
-  xml-simple: 
-    group: 
-    - :default
-    version: ~> 1.0.12
-    require: 
-    - xmlsimple
-  multipass: 
-    group: 
-    - :default
-    version: ~> 1.2.3
   capybara: 
     group: 
     - :testing
@@ -271,8 +235,10 @@ specs:
     version: 0.6.3
 - json_pure: 
     version: 1.4.3
+- rubyzip: 
+    version: 0.9.4
 - selenium-webdriver: 
-    version: 0.0.24
+    version: 0.0.27
 - capybara: 
     version: 0.3.9
 - cgi_multipart_eof_fix: 
@@ -287,14 +253,12 @@ specs:
     version: 0.3.1
 - configuration: 
     version: 1.1.0
-- crack: 
-    version: 0.1.7
 - diff-lcs: 
     version: 1.1.2
 - trollop: 
     version: 1.16.2
 - gherkin: 
-    version: 2.1.4
+    version: 2.1.5
 - term-ansicolor: 
     version: 1.0.5
 - cucumber: 
@@ -305,30 +269,20 @@ specs:
     version: 1.1.0
 - database_cleaner: 
     version: 0.5.2
-- delayed_job: 
-    version: 2.0.3
-- ezcrypto: 
-    version: 0.7.2
 - factory_girl: 
     version: 1.2.4
 - faraday: 
     version: 0.4.6
-- fastercsv: 
-    version: 1.5.3
 - fastthread: 
     version: 1.0.7
-- garb: 
-    version: 0.7.5
 - gem_plugin: 
     version: 0.2.3
+- geonames: 
+    version: 0.2.2
 - haml: 
-    version: 3.0.13
-- hoptoad_notifier: 
-    version: 2.2.6
+    version: 3.0.14
 - hpricot: 
     version: 0.8.2
-- httparty: 
-    version: 0.6.0
 - i18n: 
     version: 0.4.1
 - icalendar: 
@@ -336,7 +290,7 @@ specs:
 - json: 
     version: 1.4.3
 - launchy: 
-    version: 0.3.5
+    version: 0.3.7
 - libxml-ruby: 
     version: 1.1.4
 - linecache: 
@@ -347,16 +301,10 @@ specs:
     version: 1.1.5
 - multi_json: 
     version: 0.0.4
-- multipass: 
-    version: 1.2.3
 - mysql: 
     version: 2.8.1
-- newrelic_rpm: 
-    version: 2.10.8
-- ruby-hmac: 
-    version: 0.4.0
 - oauth: 
-    version: 0.3.6
+    version: 0.4.1
 - oauth2: 
     version: 0.0.10
 - paperclip: 
@@ -365,26 +313,24 @@ specs:
     version: 0.9.0
 - pickle: 
     version: 0.2.12
+- ruby-openid: 
+    version: 2.1.8
+- rack-openid: 
+    version: 1.1.1
 - rails: 
     version: 2.3.8
 - rdiscount: 
     version: 1.6.5
 - riddle: 
-    version: 1.0.11
+    version: 1.0.12
 - rspec: 
     version: 1.3.0
 - rspec-rails: 
     version: 1.3.2
-- rspreedly: 
-    version: 0.1.11
 - ruby-debug-base: 
     version: 0.10.3
 - ruby-debug: 
     version: 0.10.3
-- ruby-openid: 
-    version: 2.1.7
-- ruby-openid-apps-discovery: 
-    version: 1.2.0
 - sprockets: 
     version: 1.0.2
 - sprockets-rails: 
@@ -412,7 +358,7 @@ specs:
     version: 1.0.2
 - whenever: 
     version: 0.4.2
-hash: 3b183bca2606920d7b51d7c171aa294ef4d3f50a
+hash: b121681d820cda0566293f8348ca74b2635a8fe6
 sources: 
 - Git: 
     uri: git://github.com/mislav/tolk.git
